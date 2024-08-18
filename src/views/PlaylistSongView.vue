@@ -4,14 +4,15 @@ import { useRoute, onBeforeRouteUpdate, type RouteLocationNormalizedLoaded } fro
 
 import { storeToRefs } from "pinia";
 import { useRwdStore } from '@/stores/rwd';
+import { useStateStore } from '@/stores/state';
 
 import ViewLayout from '@/components/ViewLayout.vue';
+import BasicButton from '@/components/elements/BasicButton.vue';
 
 import { DataContainer } from '@/lib/vue/DataContainer';
 
 import { getSong, getPlaylist, getPlaylistSongs } from '@/lib/client';
 
-import { type ISong } from '@/lib/songs/model';
 import SongDetailsMenuButton from '@/lib/songs/view/SongDetailsMenuButton.vue';
 import SongDetails from '@/lib/songs/view/SongDetails.vue';
 
@@ -21,6 +22,7 @@ import PlaylistSongsList from '@/lib/playlists/view/PlaylistSongsList.vue';
 const route = useRoute();
 
 const { isLandscape, diagonal } = storeToRefs(useRwdStore());
+const stateStore = useStateStore();
 
 const playlistId = ref(-1);
 const playlistData: DataContainer = shallowReactive(new DataContainer());
@@ -30,7 +32,7 @@ const playlistSongs = computed((): IPlaylistSong[] | null => playlistSongsData.d
 
 const songHash = ref("");
 const songData: DataContainer = shallowReactive(new DataContainer());
-const song = computed((): ISong | null => songData.data as ISong);
+const song = computed((): IPlaylistSong | null => songData.data as IPlaylistSong);
 
 /**
  * Compute Song Title
@@ -43,6 +45,17 @@ const songTitle = computed((): string => {
  * Should show playlist songs list?
  */
 const shouldShowPlaylistSongsList = computed((): boolean => isLandscape.value && diagonal.value >= 1000 );
+
+/**
+ * Has the song been played?
+ */
+const hasBeenPlayed = computed((): boolean => {
+  if (playlistId.value == null || playlistId.value < 0 || songHash.value == "") {
+    return false;
+  }
+
+  return stateStore.isPlayed(playlistId.value, songHash.value);
+});
 
 /**
  * Handle the route location
@@ -104,6 +117,21 @@ function refresh() {
   }
 }
 
+function markAsPlayed() {
+  if (song.value == null || hasBeenPlayed.value) {
+    return;
+  }
+  
+  stateStore.markAsPlayed(playlistId.value, song.value.hash);
+}
+
+function unmarkAsPlayed() {
+  if (song.value == null || !hasBeenPlayed.value) {
+    return;
+  }
+  
+  stateStore.unmarkAsPlayed(playlistId.value, song.value.hash);
+}
 
 </script>
 
@@ -113,6 +141,8 @@ function refresh() {
     :loading-state="songData.loading">
 
     <template #toolbar>
+      <BasicButton v-if="hasBeenPlayed" title="Oznacz jako niezagraną" icon="Ccw" color="blue" @click.prevent="unmarkAsPlayed" />
+      <BasicButton v-else title="Oznacz jako zagraną" icon="Check" color="blue" @click.prevent="markAsPlayed" />
       <SongDetailsMenuButton :song="song" />
     </template>
 

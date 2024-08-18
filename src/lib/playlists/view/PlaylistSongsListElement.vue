@@ -4,7 +4,9 @@ import "@/assets/components/SongsListElement.less";
 import { computed, type PropType } from 'vue';
 import { RouterLink } from 'vue-router';
 import { useModal } from 'vue-final-modal';
+import { useStateStore } from '@/stores/state';
 
+import EntypoIcon from "@/components/elements/EntypoIcon.vue";
 import IconButton from '@/components/elements/IconButton.vue';
 import MenuModal from '@/components/modals/MenuModal.vue';
 import ConfirmModal from '@/components/modals/ConfirmModal.vue';
@@ -12,6 +14,7 @@ import ConfirmModal from '@/components/modals/ConfirmModal.vue';
 import { type IPlaylist, type IPlaylistSong } from '../model';
 import { removeSongFromPlaylist } from '@/lib/client';
 
+const stateStore = useStateStore();
 
 const props = defineProps({
   playlist: {
@@ -34,6 +37,27 @@ const emit = defineEmits<{
 
 const link = computed((): string => {
   return `/playlist/${props.playlist.id}/song/${props.song.hash}`;
+});
+
+const hasBeenPlayed = computed((): boolean => {
+  if(props.playlist.id == null) {
+    return false;
+  }
+
+  return stateStore.isPlayed(props.playlist.id, props.song.hash);
+});
+
+const getClasses = computed((): string[] => {
+  const classes = [
+    'playlist-songs-list-element',
+    'songs-list-element'
+  ];
+
+  if (hasBeenPlayed.value) {
+    classes.push('song-played');
+  }
+
+  return classes;
 });
 
 //#region -------------------- Menu --------------------
@@ -97,7 +121,7 @@ async function onConfirmRemove() {
 </script>
 
 <template>
-  <li class="playlist-songs-list-element songs-list-element">
+  <li :class="getClasses">
     <RouterLink :to="link">
       <strong>{{ song.title }}</strong>
     </RouterLink>
@@ -111,6 +135,13 @@ async function onConfirmRemove() {
 <style lang="less">
 li.playlist-songs-list-element.songs-list-element {
   display: flex;
+
+  &.song-played {
+    a {
+      color: var(--c-positive-green);
+      text-decoration: line-through;
+    }
+  }
 
   a {
     flex-grow: 1;

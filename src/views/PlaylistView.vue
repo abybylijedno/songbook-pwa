@@ -56,12 +56,7 @@ async function refresh() {
   playlist.setData(p);
   
   const _songs = await getPlaylistSongs(p.id);
-  songs.setData(_songs.map((song) => {
-    return {
-      ...song,
-      played: false
-    } as IPlaylistSong;
-  }));
+  songs.setData(_songs);
 }
 
 function whenSongRemoved(song: IPlaylistSong) {

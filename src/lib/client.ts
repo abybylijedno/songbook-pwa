@@ -1,9 +1,10 @@
+import { useStateStore } from '@/stores/state';
 import { Req } from "./requests/Req";
 
 import type { ISong } from "./songs/model/ISong";
 import { ReqListSongs, ReqSearchSongs, ReqGetSong } from "./songs/requests";
 
-import type { IPlaylist } from "./playlists/model/IPlaylist";
+import  { type IPlaylist, type IPlaylistSong } from "./playlists/model";
 import { ReqListPlaylists, ReqListPlaylistsWithoutSong,
   ReqGetPlaylist, ReqCreatePlaylist, ReqDeletePlaylist, ReqUpdatePlaylist,
   ReqListPlaylistSongs, ReqAddSongToPlaylist, ReqRemoveSongFromPlaylist } from "./playlists/requests";
@@ -45,6 +46,17 @@ worker.onmessage = (event) => {
     requests.delete(response.uuid);
   }
 };
+
+
+let stateStore: null | ReturnType<typeof useStateStore> = null;
+
+function getStateStore() {
+  if (!stateStore) {
+    stateStore = useStateStore();
+  }
+  return stateStore;
+}
+
 
 /**
  * Post request to worker
@@ -153,8 +165,8 @@ export function getPlaylistsListWithoutSong(hash: string): Promise<Array<IPlayli
  * @param id number
  * @returns Promise<ISong[]>
  */
-export function getPlaylistSongs(id: number): Promise<ISong[]> {
-  return post(new ReqListPlaylistSongs(id)) as Promise<ISong[]>;
+export function getPlaylistSongs(id: number): Promise<IPlaylistSong[]> {
+  return post(new ReqListPlaylistSongs(id)) as Promise<IPlaylistSong[]>;
 }
 
 /**

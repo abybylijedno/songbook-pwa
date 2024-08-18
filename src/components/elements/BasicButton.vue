@@ -76,5 +76,10 @@ button {
     color: var(--c-danger-red);
     font-weight: bold;
   }
+
+  &.blue {
+    border-color: var(--c-palatinate-blue);
+    color: var(--c-palatinate-blue);
+  }
 }
 </style>
