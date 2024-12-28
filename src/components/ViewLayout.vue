@@ -51,7 +51,9 @@ const contentClass = computed((): string[] => {
     <slot name="toolbar"></slot>
   </div>
   <div id="content" :class="contentClass">
-    <slot v-if="shouldShow" name="content"></slot>
+    <div id="content-wrapper">
+      <slot v-if="shouldShow" name="content"></slot>
+    </div>
   </div>
 </template>
 
@@ -120,5 +122,9 @@ const contentClass = computed((): string[] => {
 #content {
   overflow: auto;
   position: relative;
+}
+
+#content-wrapper {
+  max-width: 920px;
 }
 </style>

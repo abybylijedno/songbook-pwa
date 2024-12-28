@@ -1,22 +1,20 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
 import { storeToRefs } from "pinia";
+import { useModal } from 'vue-final-modal';
+
 import { useOptionsStore } from '@/stores/options';
+import { useSessionStore } from '@/services/session';
 
 import ViewLayout from '@/components/ViewLayout.vue';
+import ConnectionButton from '@/services/session/ConnectionButton.vue';
+import SessionManager from '@/services/session/SessionManager.vue';
 
-const store = useOptionsStore();
-const options = storeToRefs(store);
+const optionsStore = useOptionsStore();
+const options = storeToRefs(optionsStore);
+const sessionStore = useSessionStore();
 
-function b2s(val: boolean) {
-  return val ? "1" : "0";
-}
-
-function s2b(val: string) {
-  return val === "1";
-}
-
-const functionsShowChords = computed({
+const optionsShowChords = computed({
   get() {
     return options.showChords.value.toString();
   },
@@ -26,38 +24,46 @@ const functionsShowChords = computed({
   }
 });
 
-const functionsShowLeaderTools = computed({
-  get() {
-    return b2s(options.showLeaderTools.value);
-  },
-
-  set(v: string) {
-    options.showLeaderTools.value = s2b(v);
-  }
-});
 </script>
 
 <template>
   <ViewLayout title="Opcje">
     <template #content>
-      <h2>Funkcje</h2>
+      <h2>Ustawienia</h2>
       <ul>
         <li>
-          <label for="function-show-chords">Akordy</label>
-          <select id="function-show-chords" v-model="functionsShowChords">
+          <label for="option-show-chords">Akordy</label>
+          <select id="option-show-chords" v-model="optionsShowChords">
             <option value="0">Ukryj</option>
             <option value="-1">Po lewej</option>
             <option value="1">Po prawej</option>
           </select>
         </li>
+      </ul>
+
+      <h2>Sesja</h2>
+      <ul>
         <li>
-          <label for="function-show-leader-tools">Narzędzia prowadzącego</label>
-          <select id="function-show-leader-tools" v-model="functionsShowLeaderTools">
-            <option value="0">Ukryj</option>
-            <option value="1">Pokaż</option>
-          </select>
+          <label for="option-session-server">Adres serwera</label>
+          <input id="option-session-server"
+                  type="text"
+                  v-model="optionsStore.sessionServer"
+                  placeholder="adres-serwera:port">
+        </li>
+        <li>
+          <label for="option-session-username">Twój nickname</label>
+          <input id="option-session-username"
+                  type="text"
+                  v-model="optionsStore.sessionUsername"
+                  placeholder="">
+        </li>
+        <li>
+          <label>Stan połączenia: <b>{{ sessionStore.connectionStateText }}</b></label>
+          <ConnectionButton />
         </li>
       </ul>
+
+      <SessionManager v-show="sessionStore.isReady" />
 
     </template>
   </ViewLayout>

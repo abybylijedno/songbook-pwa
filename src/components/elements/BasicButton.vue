@@ -5,7 +5,8 @@ import EntypoIcon from './EntypoIcon.vue';
 
 const props = withDefaults(defineProps<IBasicButton>(), {
   color: '',
-  main: false
+  main: false,
+  disabled: false
 });
 
 const _type = computed(() => {
@@ -25,7 +26,7 @@ const _class = computed(() => {
 </script>
 
 <template>
-  <button :type="_type" :class="_class" :title="title">
+  <button :type="_type" :class="_class" :title="title" :disabled="disabled">
     <EntypoIcon :name="icon" /><span>{{ title }}</span>
   </button>
 </template>

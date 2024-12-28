@@ -60,10 +60,16 @@ p {
   line-height: 150%;
 }
 
-select {
+select,
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="number"],
+input[type="tel"] {
   padding: 0.35rem;
   border: 1px solid var(--c-dark-platinum);
   background: var(--color-background);
   border-radius: 3px;
   flex-shrink: 0;
+  color: var(--color-text);
 }

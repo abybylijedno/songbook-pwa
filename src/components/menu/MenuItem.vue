@@ -58,6 +58,7 @@ const routerLinkClasses = computed(() => {
     width: 100%;
     height: 100%;
     text-decoration: none;
+    border-top: 1px solid var(--navigation-border);
 
     &:link,
     &:visited {

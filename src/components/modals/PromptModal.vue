@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, type Ref, type PropType } from 'vue';
+import { ref, type PropType } from 'vue';
 
 import StandardModal from './StandardModal.vue';
 import BasicButton from '../elements/BasicButton.vue';
@@ -46,7 +46,8 @@ function submit() {
   props.onSubmit(val.value.trim()).then(() => {
     emit('update:modelValue', false)
   }).catch((e: any) => {
-    alert("Wystąpił błąd: " + e.message);
+    const msg = e instanceof Error ? e.message : e;
+    alert("Wystąpił błąd: " + msg);
   });
 }
 

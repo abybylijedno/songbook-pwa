@@ -5,11 +5,15 @@ import { } from 'pinia-plugin-persistedstate';
 export const useOptionsStore = defineStore('options', {
   state: () => {
     const showChords = ref(0);
-    const showLeaderTools = ref(false);
+
+    const sessionServer = ref('localhost:8081');
+    const sessionUsername = ref('');
 
     return {
       showChords,
-      showLeaderTools
+      
+      sessionServer,
+      sessionUsername
     };
   },
   

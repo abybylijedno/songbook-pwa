@@ -41,15 +41,15 @@
   --navigation-button-active-text: var(--color-link);
 }
 
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   :root {
     --color-background: var(--c-black);
     --color-text: var(--c-anti-flash-white);
 
     --color-link: var(--c-celestial-blue);
 
-    --navigation-background: var(--c-charcoal);
-    --navigation-background-shadow: var(--c-dark-charcoal);
+    --navigation-background: var(--c-black);
+    --navigation-border: var(--c-dark-charcoal);
     --navigation-button-text: var(--c-quick-silver);
   }
-}
+} */

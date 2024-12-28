@@ -17,7 +17,12 @@ const props = defineProps({
 });
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', modelValue: boolean): void
+  (e: 'update:modelValue', modelValue: boolean): void,
+  (e: 'before-open'): void,
+  (e: 'opened'): void,
+  (e: 'close'): void,
+  (e: 'before-close'): void,
+  (e: 'closed'): void
 }>()
 
 const ModalWindowTransition = ref<TransitionProps>({
@@ -33,6 +38,11 @@ const contentClass = computed(() => {
   return classes;
 });
 
+function close() {
+  emit('close');
+  emit('update:modelValue', false);
+}
+
 </script>
 
 <template>
@@ -44,6 +54,10 @@ const contentClass = computed(() => {
     overlay-class="modal-backdrop"
     :content-transition="ModalWindowTransition"
     :content-class="contentClass"
+    @before-open="() => emit('before-open')"
+    @opened="() => emit('opened')"
+    @before-close="() => emit('before-close')"
+    @closed="() => emit('closed')"
     @update:model-value="val => emit('update:modelValue', val)">
 
     <div v-if="props.title" class="modal-header">
@@ -56,7 +70,7 @@ const contentClass = computed(() => {
 
     <div class="modal-footer">
       <slot name="footer"></slot>
-      <button @click="$emit('update:modelValue', false)">{{ props.closeText }}</button>
+      <button @click="close">{{ props.closeText }}</button>
     </div>
 
   </VueFinalModal>

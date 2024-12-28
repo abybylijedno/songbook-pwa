@@ -3,5 +3,6 @@ export interface IBasicButton {
   icon: string;
   color?: string;
   main?: boolean,
+  disabled?: boolean;
   action?: Function;
 }
