@@ -1,25 +1,48 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
-import { useOptionsStore } from '@/stores/options';
 import type { PropType } from 'vue';
 import type { ISongVerse } from '../model';
 
-const options = useOptionsStore();
+import { useOptionsStore } from '@/stores/options';
+const optionsStore = useOptionsStore();
 
-defineProps({
+import { useSessionStore } from '@/services/session';
+const sessionStore = useSessionStore();
+
+const props = defineProps({
+  songHash: {
+    type: String,
+    required: true
+  },
+
+  idx: {
+    type: Number,
+    required: true
+  },
+
   verse: {
     type: Object as PropType<ISongVerse>,
     required: true
   }
 });
 
-const showChordsOnLeft = computed(() => options.showChords === -1);
-const showChordsOnRight = computed(() => options.showChords === 1);
+const showChordsOnLeft = computed(() => optionsStore.showChords === -1);
+const showChordsOnRight = computed(() => optionsStore.showChords === 1);
+
+const markCurrent = () => {
+  if (!sessionStore.hasSession || !sessionStore.isSessionCreator) {
+    return;
+  }
+
+  sessionStore.markCurrentSongVerse(props.songHash, props.idx);
+};
+
+const isCurrent = computed(() => sessionStore.hasSession && sessionStore.currentSongVerse?.songHash === props.songHash && sessionStore.currentSongVerse?.verseIdx === props.idx);
 
 </script>
 
 <template>
-  <table class="song-verse">
+  <table :class="['song-verse', { current: isCurrent }]" @click="markCurrent">
     <tr v-for="line in verse.lines"
       :key="line.uuid">
       <td class="chord" v-if="showChordsOnLeft">{{ line.chord }}</td>
@@ -33,6 +56,12 @@ const showChordsOnRight = computed(() => options.showChords === 1);
 .song-verse {
   width: calc(100% - 2 * var(--side-margin-v));
   margin: var(--side-margin-h) var(--side-margin-v);
+  padding-left: 0.5rem;
+  border-left: 3px solid transparent;
+
+  &.current {
+    border-color: var(--color-marked);
+  }
 
   td {
     font-size: 110%;

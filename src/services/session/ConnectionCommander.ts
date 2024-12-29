@@ -1,5 +1,6 @@
 import { useSessionStore } from './store';
 import { useOptionsStore } from '@/stores/options';
+import { useRoute } from 'vue-router';
 import { bus } from '@/services/event-bus';
 
 import {
@@ -11,7 +12,8 @@ import {
   type ICurrentSongVerse,
 
   Command,
-  SessionDeleteReason
+  SessionDeleteReason,
+  type ISpreadSongVerse
 } from "@abybylijedno/songbook-protocol";
 import { getUid, setUid } from "./cookie";
 import { getErrorText } from './errors';
@@ -167,6 +169,15 @@ export class ConnectionCommander {
   }
 
   /**
+   * Spread a song verse to the other session members
+   * 
+   * @param sv Song verse
+   */
+  spreadSongVerse(sv: ISpreadSongVerse) {
+    this.sendSpreadSongVerse(sv);
+  }
+
+  /**
    * Update the connection state in the session store
    */
   private updateConnectionState() {
@@ -245,7 +256,6 @@ export class ConnectionCommander {
       }
 
     }
-
   }
 
   /**
@@ -265,8 +275,6 @@ export class ConnectionCommander {
       console.error('Unexpected HelloResponse');
 
     }
-
-
   }
 
   /**
@@ -334,10 +342,10 @@ export class ConnectionCommander {
    */
   private handleCurrentSongVerse(message: ICurrentSongVerse) {
     console.debug('Received CurrentSongVerse');
-    console.log(message); // TODO: Handle the message
+
+    const sessionStore = useSessionStore();
+    sessionStore.setCurrentSongVerse(message);
   }
-
-
   
   /**
    * Send a command to the session server
@@ -400,6 +408,17 @@ export class ConnectionCommander {
   private sendSessionLeave() {
     console.debug('Sending SessionLeave');
     this.sendCommand(Command.fromSessionLeave({}));
+  }
+
+  /**
+   * Send a SpreadSongVerse command
+   * This command sends a song verse to the other session members
+   * 
+   * @param sv Song verse
+   */
+  private sendSpreadSongVerse(sv: ISpreadSongVerse) {
+    console.debug('Sending SpreadSongVerse');
+    this.sendCommand(Command.fromSpreadSongVerse(sv));
   }
 
 }

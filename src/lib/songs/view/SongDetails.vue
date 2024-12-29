@@ -16,7 +16,7 @@ defineProps({
 
 <template>
   <article v-if="song" class="song-details">
-    <SongVersesList :verses="song.verses" />
+    <SongVersesList :song-hash="song.hash" :verses="song.verses" />
     <SongMetaContainer :meta="song.meta" />
   </article>
   <InfoScreen v-else

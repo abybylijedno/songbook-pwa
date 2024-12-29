@@ -5,6 +5,7 @@ import { createVfm } from 'vue-final-modal';
 import App from './App.vue';
 import router from './router';
 import popups from './plugins/popups';
+import sessionPlugin from './services/session/plugin';
 
 import { createPinia } from 'pinia';
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
@@ -20,5 +21,6 @@ app.use(pinia);
 app.use(router);
 app.use(vfm);
 app.use(popups);
+app.use(sessionPlugin, { router });
 
 app.mount('#app');

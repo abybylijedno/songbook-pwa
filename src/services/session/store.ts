@@ -1,8 +1,11 @@
-import { ref, type Ref, computed, reactive } from 'vue';
+import { ref, type Ref, computed } from 'vue';
 import { defineStore } from 'pinia';
-import { type ISessionDetails } from '@abybylijedno/songbook-protocol';
+import {
+  type ISessionDetails,
+  type ICurrentSongVerse
+} from '@abybylijedno/songbook-protocol';
 import { getUid } from './cookie';
-
+import { cc } from './index';
 
 export const useSessionStore = defineStore('session', () => {
   
@@ -42,6 +45,21 @@ export const useSessionStore = defineStore('session', () => {
     return sessionDetails.value!.members[0].user.uid === getUid();
   });
 
+  const currentSongVerse: Ref<null | ICurrentSongVerse> = ref(null);
+
+  const setCurrentSongVerse = (sv: ICurrentSongVerse): ICurrentSongVerse => {
+    currentSongVerse.value = sv;
+    return currentSongVerse.value;
+  }
+
+  const markCurrentSongVerse = (songHash: string, verseIdx: number) => {
+    const sv = setCurrentSongVerse({ songHash, verseIdx });
+
+    if (isReady.value) {
+      cc.spreadSongVerse(sv);
+    }
+  };
+
   return {
     connectionState,
     handshakeSuccessful,
@@ -52,6 +70,10 @@ export const useSessionStore = defineStore('session', () => {
 
     sessionDetails,
     hasSession,
-    isSessionCreator
+    isSessionCreator,
+
+    currentSongVerse,
+    setCurrentSongVerse,
+    markCurrentSongVerse
   };
 });

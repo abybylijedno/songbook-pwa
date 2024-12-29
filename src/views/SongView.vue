@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, computed, onActivated, shallowReactive } from 'vue';
+import { ref, computed, onActivated, shallowReactive, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
 import ViewLayout from '@/components/ViewLayout.vue';
@@ -17,9 +17,14 @@ const songHash = ref("");
 const container: DataContainer = shallowReactive(new DataContainer());
 
 /**
- * When the view is activated, load the song from the server
+ * Load the song
  */
- onActivated(() => {
+const loadSong = async () => {
+  if (songHash.value === route.params.songHash) {
+    return;
+  }
+
+  console.debug("Loading song");
   songHash.value = route.params.songHash as string;
   
   if (songHash.value == null) {
@@ -27,15 +32,35 @@ const container: DataContainer = shallowReactive(new DataContainer());
     return;
   }
 
-  getSong(songHash.value).then((data) => {
-    container.setData(data);
-  });
+  const data = await getSong(songHash.value);
+  container.setData(data);
+};
+
+/**
+ * Watch for changes to the song hash
+ */
+watch(() => route.params.songHash, (newValue) => {
+  if (!newValue) {
+    return;
+  }
+  
+  console.debug('Song Hash Changed', newValue);
+  loadSong();
 });
+
+/**
+ * When the view is activated, load the song
+ */
+onActivated(() => {
+  console.debug("Activating Song View");
+  loadSong();
+});
+
 
 /**
  * Compute Song
  */
- const song = computed((): ISong | null => {
+const song = computed((): ISong | null => {
   return container.data as ISong;
 });
 

@@ -2,7 +2,7 @@
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 
-const router = useRoute();
+const route = useRoute();
 
 const props = defineProps({
   title: {
@@ -30,7 +30,7 @@ const contentClass = computed((): string[] => {
   const classes = [];
   
   // Add to classes current page name from vue router
-  const currentRouteName = router.name;
+  const currentRouteName = route.name;
   if (currentRouteName) {
     classes.push(`content-view-${currentRouteName.toString()}`);
   }
