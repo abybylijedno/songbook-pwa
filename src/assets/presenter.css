@@ -11,8 +11,14 @@
   width: 100%;
   height: 100%;
   margin: 0;
-  padding: 10mm;
+  padding: 50px;
   font-weight: normal;
-  font-size: 32pt;
+  font-size: 64px;
+  line-height: 1.5;
   display: grid;
+}
+
+#app > * {
+  align-self: center;
+  justify-self: left;
 }
