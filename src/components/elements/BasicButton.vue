@@ -6,7 +6,8 @@ import EntypoIcon from './EntypoIcon.vue';
 const props = withDefaults(defineProps<IBasicButton>(), {
   color: '',
   main: false,
-  disabled: false
+  disabled: false,
+  show: true
 });
 
 const _type = computed(() => {
@@ -81,6 +82,12 @@ button {
   &.blue {
     border-color: var(--c-palatinate-blue);
     color: var(--c-palatinate-blue);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    filter: grayscale(100%);
   }
 }
 </style>

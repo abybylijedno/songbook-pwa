@@ -11,7 +11,7 @@ export default {
       (newValue) => {
         const route = router.currentRoute.value;      
 
-        if (newValue === null || route.name !== 'song') {
+        if (newValue === null || !["home", "song"].includes(route.name as string)) {
           return;
         }
 

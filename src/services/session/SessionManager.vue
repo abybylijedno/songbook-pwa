@@ -10,7 +10,13 @@ import BasicButton from '@/components/elements/BasicButton.vue';
 import EntypoIcon from '@/components/elements/EntypoIcon.vue';
 
 import { useSessionStore } from './store';
-const store = useSessionStore();
+const sessionStore = useSessionStore();
+
+import { usePresenterStore } from '../presenter/store';
+const presenterStore = usePresenterStore();
+
+import { openPresenterWindow } from '../presenter';
+import isMobile from 'ismobilejs';
 
 /**
  * This state disabled both buttons when true.
@@ -137,9 +143,9 @@ interface IMember {
 const members: ComputedRef<IMember[]> = computed(() => {
   const _members: IMember[] = [];
   
-  if (store.sessionDetails) {
-    for (let idx = 0; idx < store.sessionDetails.members.length; idx++) {
-      const _member = store.sessionDetails.members[idx];
+  if (sessionStore.sessionDetails) {
+    for (let idx = 0; idx < sessionStore.sessionDetails.members.length; idx++) {
+      const _member = sessionStore.sessionDetails.members[idx];
       if (!_member) continue;
 
       _members.push({
@@ -154,23 +160,47 @@ const members: ComputedRef<IMember[]> = computed(() => {
   return _members;
 });
 
+/**
+ * Show presenter button.
+ */
+const showPresenterButton = ref(!isMobile().any);
+
+/**
+ * Is presenter button disabled?
+ */
+const isPresenterButtonDisabled = computed(() => presenterStore.isChildWindowOpen);
+
+/**
+ * Start presenter window.
+ */
+const startPresenterWindow = async () => {
+  await openPresenterWindow();
+};
 </script>
 
 <template>
   <div id="session-manager">
     <!-- Session details block -->
-    <div v-if="store.hasSession" class="session-details">
+    <div v-if="sessionStore.hasSession" class="session-details">
 
       <!-- Session ID -->
       <div class="session-id">
         <p>Kod sesji:</p>
-        <p class="session-code">{{ store.sessionDetails?.id }}</p>
+        <p class="session-code">{{ sessionStore.sessionDetails?.id }}</p>
       </div>
 
       <!-- Session control -->
       <div class="session-control">
         <BasicButton
-          v-if="store.isSessionCreator"
+          v-if="showPresenterButton"
+          title="Uruchom okno prezentacji"
+          icon="Publish"
+          color="blue"
+          :disabled="isPresenterButtonDisabled"
+          @click="startPresenterWindow" />
+
+        <BasicButton
+          v-if="sessionStore.isSessionCreator"
           title="Usuń sesję"
           icon="Trash"
           color="red"
@@ -273,7 +303,7 @@ const members: ComputedRef<IMember[]> = computed(() => {
         padding: 0em 0.5em;
 
         svg {
-          color: #b84e00;
+          color: var(--color-marked);
           font-size: 0.8em;
           margin-left: 0.3em;
         }

@@ -3,7 +3,7 @@ import { type PropType } from 'vue';
 
 import StandardModal from './StandardModal.vue';
 import BasicButton from '../elements/BasicButton.vue';
-import type { IBasicButton } from '../elements/IBasicButton';
+import { type IBasicButton } from '../elements/IBasicButton';
 
 const emit = defineEmits<{
   (e: 'update:modelValue', modelValue: boolean): void
@@ -37,6 +37,7 @@ function handleClickOnButton(button: IBasicButton) {
       :icon="button.icon"
       :color="button.color"
       :main="button.main"
+      v-show="button.show !== false"
       @click.prevent="handleClickOnButton(button)" />
 
   </StandardModal>

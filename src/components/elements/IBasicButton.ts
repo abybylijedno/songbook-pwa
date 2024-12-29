@@ -4,5 +4,6 @@ export interface IBasicButton {
   color?: string;
   main?: boolean,
   disabled?: boolean;
+  show?: boolean;
   action?: Function;
 }
