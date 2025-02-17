@@ -1,4 +1,4 @@
-FROM node:lts-alpine3.18 AS builder
+FROM node:22-alpine3.20 AS builder
 
 WORKDIR /app
 
@@ -11,7 +11,7 @@ RUN npm run build
 
 # --- --- --- --- --- --- #
 
-FROM nginx:alpine3.18
+FROM nginx:alpine3.20
 
 ARG htmldir=/usr/share/nginx/html
 

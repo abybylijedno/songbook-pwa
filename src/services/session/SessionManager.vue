@@ -26,7 +26,7 @@ let buttonDisabled = ref(false);
 /**
  * Code validation regexp.
  */
-const CODE_VALIDATION_REGEXP = /^\d{8}$/;
+const CODE_VALIDATION_REGEXP = /^\d{4}$/;
 
 /**
  * Join session by code.
@@ -39,7 +39,7 @@ const joinSession = async (code: string) => {
   code = code.trim();
   if (!CODE_VALIDATION_REGEXP.test(code)) {
     buttonDisabled.value = false;
-    throw new Error("Kod sesji powinien składać się z 8 cyfr.");
+    throw new Error("Kod sesji powinien składać się z 4 cyfr.");
   }
 
   try {
@@ -56,7 +56,7 @@ const joinSessionModal = useModal({
   component: PromptModal,
   attrs: {
     title: "Podaj kod sesji od prowadzącego",
-    placeholder: "Kod sesji powinien mieć 8 cyfr",
+    placeholder: "Kod sesji powinien mieć 4 cyfr",
 
     submitButtonTitle: "Dołącz",
     submitButtonColor: "green",
