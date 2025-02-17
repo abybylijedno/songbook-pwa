@@ -41,7 +41,17 @@ export class ConnectionCommander {
     const optionsStore = useOptionsStore();
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
 
-    this.socket = new WebSocket(`${protocol}//${optionsStore.sessionServer}/ws`);
+    let urn = optionsStore.sessionServer;
+    if (urn.startsWith('/')) {
+      const _path = urn;
+      urn = window.location.hostname;
+      if (window.location.port !== '') {
+        urn += `:${window.location.port}`;
+      }
+      urn += _path;
+    }
+
+    this.socket = new WebSocket(`${protocol}//${urn}/ws`);
     this.socket.binaryType = "arraybuffer";
     
     this.updateConnectionState();
